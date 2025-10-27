@@ -124,6 +124,8 @@ REST API Service
 
 #### Fork the repository on GitHub
 
+    click the "Fork" button on the top-right corner of the repository page.
+
 ```bash
 # Clone your fork
 git clone https://github.com/YOUR_USERNAME/Email-Scrapper.git
