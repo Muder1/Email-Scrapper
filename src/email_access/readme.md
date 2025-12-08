@@ -1,114 +1,54 @@
-Gmail Attachment & Message Reader (Python)
+**Email Access Modules**
 
-This project provides a Python script that connects to the Gmail API, reads inbox messages, extracts body text, and automatically downloads email attachments. It uses OAuth2 authentication and the official Google API Python Client.
+This project provides a Python script that connects to the Gmail API, reads inbox messages, extracts body text, and automatically downloads email attachments. It uses OAuth2 authentication and the official Google API.
 
-Features
+<hr>
 
-Authenticate securely with Gmail API (OAuth2)
+**Features**
 
-Fetch the latest email messages
+1. Authenticate securely with Gmail API (OAuth2)
+2. Fetch the latest email messages
+3. Extract plain-text email bodies
+4. Recursively parse multipart emails
+5. Automatically download all attachments into a downloads/ folder
+6. Handles access token refresh
+7. Supports nested multipart/mixed and multipart/alternative structures
 
-Extract plain-text email bodies
+<hr>
 
-Recursively parse multipart emails
+**Requirements**
 
-Automatically download all attachments into a downloads/ folder
+1. Python 3.10+
+2. A Google Cloud project with Gmail API enabled
 
-Handles access token refresh
+<hr>
 
-Supports nested multipart/mixed and multipart/alternative structures
+**Setup Instructions**
 
-Requirements
-
-Python 3.8+
-
-A Google Cloud project with Gmail API enabled
-
-credentials.json (OAuth2 client credentials)
-
-Install dependencies:
-
-pip install --upgrade google-api-python-client google-auth-httplib2 google-auth-oauthlib
-
-Setup Instructions
 1. Enable Gmail API
 
-Go to the Google Cloud Console
-
-Enable "Gmail API"
-
-Create OAuth 2.0 Client ID (Desktop App)
-
-Download credentials.json and place it in the project folder
+  Go to the Google Cloud Console
+  Enable "Gmail API"
+  Create OAuth 2.0 Client ID (Web Application)
+  Download credentials.json and place it in the project folder
 
 2. Install Dependencies
+```bash
 pip install -r requirements.txt
+```
 
-3. First-Time Authentication
-
-Run:
-
+4. First-Time Authentication
+  Run:
+```bash
 python main.py
+```
 
+  A browser window will open for you to authorize Gmail access.
+  After that, a token.json file will be created automatically.
+<hr>
 
-A browser window will open for you to authorize Gmail access.
-After that, a token.json file will be created automatically.
+**Notes**
 
-How It Works
-Main Script Behavior
-
-Connects to Gmail using OAuth2 tokens
-
-Fetches up to 50 recent inbox messages
-
-Reads headers such as "From" and "Subject"
-
-Extracts the plain-text body
-
-Detects and downloads attachments automatically
-
-Attachment Downloading
-
-Attachments are saved into:
-
-downloads/<filename>
-
-
-The folder is automatically created if missing.
-
-Multipart Parsing
-
-Handles:
-
-text/plain
-
-multipart/alternative
-
-multipart/mixed
-
-attachments with attachmentId
-
-Using a recursive parsing function.
-
-Project Structure
-.
-├── main.py
-├── credentials.json
-├── token.json        # created after first login
-└── downloads/        # attachments stored here
-
-Example Output
-Found 18 messages. Processing...
-
-ID: 19283abce91923
-  From: Example Sender <sender@example.com>
-  Subject: Invoice Attached
-  Body Preview: Hello, please find the invoice attached.
-
-Notes
-
-Only text/plain emails are extracted. HTML support can be added if needed.
-
-Attachments with identical filenames will overwrite previous ones.
-
-Keep token.json in the same directory so Gmail authentication persists.
+*Only text/plain emails are extracted. HTML support can be added if needed.*
+*Attachments with identical filenames will overwrite previous ones.*
+*Keep token.json in the same directory so Gmail authentication persists.*
