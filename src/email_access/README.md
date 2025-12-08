@@ -27,9 +27,9 @@ This project provides a Python script that connects to the Gmail API, reads inbo
 
 1. Enable Gmail API
 
-  Go to the Google Cloud Console
-  Enable "Gmail API"
-  Create OAuth 2.0 Client ID (Web Application)
+  Go to the Google Cloud Console <br>
+  Enable "Gmail API" <br>
+  Create OAuth 2.0 Client ID (Web Application) <br>
   Download credentials.json and place it in the project folder
 
 2. Install Dependencies
@@ -52,3 +52,4 @@ python main.py
 *Only text/plain emails are extracted. HTML support can be added if needed.*<br>
 *Attachments with identical filenames will overwrite previous ones.*<br>
 *Keep token.json in the same directory so Gmail authentication persists.*
+
