@@ -32,7 +32,6 @@ def download_attachment(service, message_id, attachment_id, filename):
 
         return path
     except Exception:
-        # You may want to log the exception here
         return None
 
 
@@ -71,7 +70,6 @@ def parse_parts(service, parts, message_id):
 
 
 def get_gmail_service():
-    """Create and return an authenticated Gmail API service instance."""
     creds = None
     if os.path.exists("token.json"):
         creds = Credentials.from_authorized_user_file("token.json", SCOPES)
@@ -90,13 +88,7 @@ def get_gmail_service():
 
 
 def fetch_unread_emails(service, max_results: int = 50):
-    """
-    Fetch unread emails from the user's inbox.
-
-    Only messages that are both in INBOX and UNREAD will be returned.
-    """
     try:
-        # Filter to only unread emails in the inbox
         results = (
             service.users()
             .messages()
@@ -150,11 +142,6 @@ def fetch_unread_emails(service, max_results: int = 50):
 
 
 def main(poll_interval_seconds: int = 300):
-    """
-    Continuously fetch unread emails every `poll_interval_seconds` seconds.
-
-    Default interval is 300 seconds (5 minutes).
-    """
     service = get_gmail_service()
 
     print(f"Starting unread email fetcher. Polling every {poll_interval_seconds} seconds.")
@@ -166,5 +153,4 @@ def main(poll_interval_seconds: int = 300):
 
 
 if __name__ == "__main__":
-    # Starts an infinite loop that checks for unread emails every 5 minutes.
     main()
