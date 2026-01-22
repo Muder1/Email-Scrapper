@@ -1,13 +1,15 @@
 from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
 from bson.objectid import ObjectId
-uri = "mongodb+srv://databse34:Project456@cluster0.pxydvmk.mongodb.net/?appName=Cluster0"
-client = MongoClient(uri, server_api=ServerApi('1'))
+url = "mongodb+srv://databse34:Project456@cluster0.pxydvmk.mongodb.net/?appName=Cluster0"
+
+client = MongoClient(url, server_api=ServerApi('1'))
 try:
     client.admin.command('ping')
     print("Pinged your deployment. You successfully connected to MongoDB!")
 except Exception as e:
     print(e)
+    
 
 db=client["EmailScrapper"]
 collection=db["Scrap"]
@@ -23,7 +25,7 @@ def insertinfo(dt):
     result=collection.insert_many(dt)
         
     document_ids = result.inserted_ids
-    print(document_ids)
+    print(f"Inserted documents with IDs:{document_ids}")
     return document_ids
 
 def getinfo(docid):
@@ -40,22 +42,21 @@ def getinfo(docid):
 
 
 x=input("""Press 1: To get data
-        Press 2: To insert data""")
+Press 2: To insert data
+""")
 if x=="1":
     idIn=input()
 elif x=='2':
-    dt=[]
-    n=input()
-    for i in range(n):
-        k=input("key")
-        v=input("value")
-        dt[k]=v
-
-if len(dt)==1:
-    insertone(dt)
-elif len(dt)>1:
-    insertinfo(dt)
-
-getinfo(idIn)
+    try: 
+        dt={}
+        n=int(input("No. of Key-Values Pair: "))
+        for i in range(n):
+            k=input("key: ")
+            v=input("value: ")
+            dt[k]=v
+        if dt: 
+            new_id = insertone(dt)
+    except ValueError: 
+        print("Invalid Input")
 
 client.close()
