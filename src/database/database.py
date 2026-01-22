@@ -1,62 +1,56 @@
-from pymongo.mongo_client import MongoClient
+
+from pymongo import MongoClient
 from pymongo.server_api import ServerApi
-from bson.objectid import ObjectId
+from pymongo.errors import DuplicateKeyError
+import datetime
+
 url = "mongodb+srv://databse34:Project456@cluster0.pxydvmk.mongodb.net/?appName=Cluster0"
-
 client = MongoClient(url, server_api=ServerApi('1'))
-try:
-    client.admin.command('ping')
-    print("Pinged your deployment. You successfully connected to MongoDB!")
-except Exception as e:
-    print(e)
-    
+db = client["EmailServer"]  
+collection = db["InboundEmails"]
 
-db=client["EmailScrapper"]
-collection=db["Scrap"]
+def save_raw_email(message_id, sender, subject, body, received_at):
+    document = {
+        "_id": message_id,  # Use Gmail's message-ID
+        "metadata": {
+            "sender": sender,
+            "subject": subject,
+            "received_at": received_at
+        },
+        "content": {
+            "body": body
+        },
+        "classification": {
+            "category": None,     
+            "processed": False
+        }
+    }
 
-def insertone(dt):
-    result=collection.insert_one(dt)
-        
-    document_id = result.inserted_id
-    print(f"Inserted single document with ID: {document_id}")
-    return document_id
-
-def insertinfo(dt):
-    result=collection.insert_many(dt)
-        
-    document_ids = result.inserted_ids
-    print(f"Inserted documents with IDs:{document_ids}")
-    return document_ids
-
-def getinfo(docid):
     try:
-        document = collection.find_one({"_id":ObjectId(docid)})
-        if document:
-            print (document)
-        else:
-            print(f"Couldn't find document: {docid}")            
-        return document
-    except Exception as e:
-        print(f"Connection Issue: {e}")
-        return None
+        collection.insert_one(document)
+        print(f"[+] Stored email: {subject[:30]}...")
+        return True
+    except DuplicateKeyError:
+        print(f"[-] Skipped duplicate email: {message_id}")
+        return False
 
+def update_classification(message_id, category, confidence):
+    result = collection.update_one(
+        {"_id": message_id},
+        {
+            "$set": {
+                "classification.category": category,
+                "classification.confidence": confidence,
+                "classification.processed": True,
+                "classification.processed_at": datetime.datetime.now()
+            }
+        }
+    )
+    
+    if result.modified_count > 0:
+        print(f"Classified {message_id} as {category}")
+    else:
+        print(f"Error: Could not find message {message_id}")
 
-x=input("""Press 1: To get data
-Press 2: To insert data
-""")
-if x=="1":
-    idIn=input()
-elif x=='2':
-    try: 
-        dt={}
-        n=int(input("No. of Key-Values Pair: "))
-        for i in range(n):
-            k=input("key: ")
-            v=input("value: ")
-            dt[k]=v
-        if dt: 
-            new_id = insertone(dt)
-    except ValueError: 
-        print("Invalid Input")
-
-client.close()
+def get_unprocessed_emails():
+    return list(collection.find({"classification.processed": False}))
